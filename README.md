@@ -15,3 +15,5 @@ Pluto. Репозиторий [на гитхабе](https://github.com/fonsp/Plu
 [Gumbo](https://github.com/JuliaWeb/Gumbo.jl) - html парсинг
 
 [Cascadia](https://github.com/Algocircle/Cascadia.jl) - CSS селектор
+
+[PyCall](https://github.com/JuliaPy/PyCall.jl) - Вызов функций Python
