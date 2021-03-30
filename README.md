@@ -7,6 +7,8 @@ Julia. Репозиторий языка [на гитхабе](https://github.co
 # Среда разработки и выполнения (?)
 Pluto. Репозиторий [на гитхабе](https://github.com/fonsp/Pluto.jl)
 
+Но можно выполнять код и из терминала
+
 # Библиотеки/зависимости
 [TextAnalysis](https://github.com/JuliaText/TextAnalysis.jl) - работа с текстом
 
