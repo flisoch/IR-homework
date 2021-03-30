@@ -23,7 +23,7 @@ nltk.download("averaged_perceptron_tagger")
  lemmatizer = nltk.WordNetLemmatizer()
 
 # ╔═╡ 8143c738-90d1-11eb-0190-f3e6f96d6f3a
-filescount = 20
+filescount = 7
 
 # ╔═╡ f09ab678-90d1-11eb-0fba-d97f606b0175
 function readfile(index)
