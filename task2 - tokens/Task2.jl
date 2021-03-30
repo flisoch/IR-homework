@@ -55,13 +55,10 @@ end
 # ╔═╡ f2d680c4-90e1-11eb-3c9c-21588d3f7c66
 function savewords(words)
 	io = open("words.txt", "a+")
-	io1 = open("lemmas.txt", "a+")
 	for word in words
 		write(io, word * "\n")
-		# write(io1, word * " " * lemma * "\n")
 	end
 	close(io)
-	close(io1)
 end
 
 # ╔═╡ 840a26d8-90ef-11eb-3373-918c3654e4f1
