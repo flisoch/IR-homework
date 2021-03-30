@@ -17,3 +17,5 @@ Pluto. Репозиторий [на гитхабе](https://github.com/fonsp/Plu
 [Cascadia](https://github.com/Algocircle/Cascadia.jl) - CSS селектор
 
 [PyCall](https://github.com/JuliaPy/PyCall.jl) - Вызов функций Python
+
+[nltk](https://github.com/nltk/nltk) - NLP на Python
