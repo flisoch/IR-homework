@@ -159,9 +159,9 @@ using TextAnalysis
 	
 	@testset "idf test" begin
 		correct = Dict()
-		correct["new"] = 0.584
-		correct["los"] = 1.584
 		correct["angeles"] = 1.584
+		correct["los"] = 1.584
+		correct["new"] = 0.584
 		correct["post"] = 1.584
 		correct["times"] = 0.584
 		correct["york"] = 0.584	
@@ -196,13 +196,45 @@ using TextAnalysis
 		for i = 1:length(correct)
 			@test correct[i] isa Dict
 			@test tfidfs[i] isa Dict
-			@show correct[i]
-			@show tfidfs[i]
 			# @test isequal(correct[i], tfidfs[i])
 			for (key, value) in tfidfs[i]
 				@test correct[i][key] == round(value, digits=3, RoundDown)
 			end
 		end	
+	end
+	
+	@testset "cosine similarity test" begin
+		query = "new new times"
+	
+		dcossim_expected = [0.77, 0.29, 0.11]
+		d1cossim_expected = 0.77
+		d2cossim_expected = 0.29
+		d3cossim_expected = 0.11
+		query_tfidf = Dict("angeles"=>0, "los"=>0, "new"=>0.584, "post"=>0, "times"=>0.292, "york"=>0)
+		
+		function cossim(doc_tfidf, query_tfidf)
+			@test doc_tfidf isa Dict
+			@test query_tfidf isa Dict
+			sum = 0
+			doclength = 0
+			querylength = 0
+			for (word, tfidf) in doc_tfidf
+				sum += tfidf * query_tfidf[word]
+				doclength += tfidf * tfidf
+				querylength += query_tfidf[word] * query_tfidf[word]
+			end
+			doclength = sqrt(doclength)
+			querylength = sqrt(querylength)
+			result = sum / (doclength * querylength)
+			result
+
+		end
+		
+		
+		for i = 1:length(tfidfs)
+			dcossim_actual = cossim(tfidfs[i], query_tfidf)		
+			@test round(dcossim_actual, digits=2, RoundDown) == dcossim_expected[i]
+		end
 	end
 	
 end
@@ -240,9 +272,6 @@ a = Dict("angeles"=>0, "los"=>0, "new"=>1, "post"=>0, "times"=>1, "york"=>1)
 # ╔═╡ 882bc6c4-92f5-11eb-0593-576b01e9c098
 
 
-# ╔═╡ 80975068-92f5-11eb-208f-4fee9551610d
-
-
 # ╔═╡ Cell order:
 # ╠═3eb7816a-92e9-11eb-2394-d326ed6a5bb2
 # ╠═2be27ea4-92ea-11eb-25b9-45b02ee0a935
@@ -264,4 +293,3 @@ a = Dict("angeles"=>0, "los"=>0, "new"=>1, "post"=>0, "times"=>1, "york"=>1)
 # ╠═33c281a6-92f3-11eb-3084-ad43a9b9f718
 # ╠═64fce530-92f4-11eb-28aa-ade061004c5a
 # ╠═882bc6c4-92f5-11eb-0593-576b01e9c098
-# ╠═80975068-92f5-11eb-208f-4fee9551610d
