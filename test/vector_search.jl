@@ -105,35 +105,34 @@ using TextAnalysis
 		lexicon = crps.lexicon
 		for (word, count) in lexicon
 			docsmatchcount = length(invidx[word])
-			# @show word
-			# @show count
-			# @show docsmatchcount
 			idf = log2(length(crps)/docsmatchcount)
 			idfdict[word] = idf
 		end
 		idfdict
 	end
 	
-	function tfDict2(doclexicon, crpslexicon)
-		tfDict = Dict()
+	function tf(doclexicon, crpslexicon)
+		tf_dict = Dict()
 		doclexicon.count
 		for (word, count) in crpslexicon
 			
 			if haskey(doclexicon, word)
-				tfDict[word] = doclexicon[word] # /crpslexicon.len to normalize
+				tf_dict[word] = doclexicon[word] # /crpslexicon.len to normalize
 			else
-				tfDict[word] = 0
+				tf_dict[word] = 0
 			end
 		end
-		tfDict
+		tf_dict
 	end
 	
+	
+		
 	function corpustfs(crps)
 		tfs = []
 		for stringdocument in crps
 			corpus1 = Corpus([stringdocument])
 			update_lexicon!(corpus1)
-			push!(tfs, tfDict2(corpus1.lexicon, crps.lexicon))
+			push!(tfs, tf(corpus1.lexicon, crps.lexicon))
 		end
 		tfs
 	end
@@ -141,15 +140,21 @@ using TextAnalysis
 	function corpustfidf(crps, tfs, idf)
 		tfidfs = []
 		for i = 1: length(crps)
-			doctfdict = tfs[i]
-			doctfidfdict = Dict()
-			for (word, tfvalue) in doctfdict
-				tfidf = tfvalue * idf[word]
-				doctfidfdict[word] = tfidf
-			end
-			push!(tfidfs, doctfidfdict)
+			doc_tf = tfs[i]
+			doc_tfidf = tfidf(doc_tf, idf)
+		
+			push!(tfidfs, doc_tfidf)
 		end
 		tfidfs
+	end
+	
+	function tfidf(doc_tf, idf)
+		doc_tfidf = Dict()
+		for (word, tf) in doc_tf
+			tfidf_value = tf * idf[word]
+			doc_tfidf[word] = tfidf_value
+		end
+		doc_tfidf
 	end
 	
 	inverseindex = inverse_index(corpus)
