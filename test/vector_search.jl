@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.21
+# v0.14.0
 
 using Markdown
 using InteractiveUtils
@@ -9,6 +9,24 @@ using Test
 
 # ╔═╡ 2be27ea4-92ea-11eb-25b9-45b02ee0a935
 using TextAnalysis
+
+# ╔═╡ cb9b9902-9327-11eb-05ab-07f6c6ecdb8e
+function ingredients(path::String)
+	# this is from the Julia source code (evalfile in base/loading.jl)
+	# but with the modification that it returns the module instead of the last object
+	name = Symbol(basename(path))
+	m = Module(name)
+	Core.eval(m,
+        Expr(:toplevel,
+             :(eval(x) = $(Expr(:core, :eval))($name, x)),
+             :(include(x) = $(Expr(:top, :include))($name, x)),
+             :(include(mapexpr::Function, x) = $(Expr(:top, :include))(mapexpr, $name, x)),
+             :(include($path))))
+	m
+end
+
+# ╔═╡ d921102a-9327-11eb-120d-5febd1acab0f
+TfIdf = ingredients("../src/tf_idf.jl")
 
 # ╔═╡ dd730764-92e9-11eb-3f4d-41c014719785
 # doc1 = StringDocument("new york times")
@@ -99,68 +117,11 @@ using TextAnalysis
 	corpus = Corpus([doc1, doc2, doc3])
 	update_lexicon!(corpus)
 	update_inverse_index!(corpus)
-	
-	function corpusidf(crps, invidx)
-		idfdict = Dict()
-		lexicon = crps.lexicon
-		for (word, count) in lexicon
-			docsmatchcount = length(invidx[word])
-			idf = log2(length(crps)/docsmatchcount)
-			idfdict[word] = idf
-		end
-		idfdict
-	end
-	
-	function tf(doclexicon, crpslexicon)
-		tf_dict = Dict()
-		doclexicon.count
-		for (word, count) in crpslexicon
-			
-			if haskey(doclexicon, word)
-				tf_dict[word] = doclexicon[word] # /crpslexicon.len to normalize
-			else
-				tf_dict[word] = 0
-			end
-		end
-		tf_dict
-	end
-	
-	
-		
-	function corpustfs(crps)
-		tfs = []
-		for stringdocument in crps
-			corpus1 = Corpus([stringdocument])
-			update_lexicon!(corpus1)
-			push!(tfs, tf(corpus1.lexicon, crps.lexicon))
-		end
-		tfs
-	end
-	
-	function corpustfidf(crps, tfs, idf)
-		tfidfs = []
-		for i = 1: length(crps)
-			doc_tf = tfs[i]
-			doc_tfidf = tfidf(doc_tf, idf)
-		
-			push!(tfidfs, doc_tfidf)
-		end
-		tfidfs
-	end
-	
-	function tfidf(doc_tf, idf)
-		doc_tfidf = Dict()
-		for (word, tf) in doc_tf
-			tfidf_value = tf * idf[word]
-			doc_tfidf[word] = tfidf_value
-		end
-		doc_tfidf
-	end
-	
+
 	inverseindex = inverse_index(corpus)
-	idfs = corpusidf(corpus, inverseindex)
-	tfs = corpustfs(corpus)
-	tfidfs = corpustfidf(corpus, tfs, idfs)
+	idfs = TfIdf.corpusidf(corpus, inverseindex)
+	tfs = TfIdf.corpustfs(corpus)
+	tfidfs = TfIdf.corpustfidf(corpus, tfs, idfs)
 	
 	@testset "idf test" begin
 		correct = Dict()
@@ -242,6 +203,7 @@ using TextAnalysis
 		end
 	end
 	
+	
 end
 
 # ╔═╡ 1ccd309a-92f3-11eb-3c61-9d327ca0aae3
@@ -275,11 +237,13 @@ corpustfs1(corpus1)
 a = Dict("angeles"=>0, "los"=>0, "new"=>1, "post"=>0, "times"=>1, "york"=>1)
 
 # ╔═╡ 882bc6c4-92f5-11eb-0593-576b01e9c098
-
+tfidf3.tf
 
 # ╔═╡ Cell order:
 # ╠═3eb7816a-92e9-11eb-2394-d326ed6a5bb2
 # ╠═2be27ea4-92ea-11eb-25b9-45b02ee0a935
+# ╠═cb9b9902-9327-11eb-05ab-07f6c6ecdb8e
+# ╠═d921102a-9327-11eb-120d-5febd1acab0f
 # ╠═dd730764-92e9-11eb-3f4d-41c014719785
 # ╠═e46ce0b4-92e9-11eb-06eb-83d1557cd320
 # ╠═ea9d551a-92e9-11eb-2afb-0b4afee0bcd7
