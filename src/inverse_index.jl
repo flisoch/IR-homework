@@ -80,6 +80,24 @@ invidx = saved_inverseindex()
 # ╔═╡ 50dd6751-3d52-4203-936a-fd4410e073d6
 invidx["gautama"]
 
+# ╔═╡ b7cb8d94-fd8e-4113-aa8c-942c3e25c925
+function loadlinks(indeces, path="../data/index.txt")
+	links = []
+	io = open(path, "r")
+	lines = readlines(io)
+	for line in lines
+		s = split(line, " ")
+		index = s[1]
+		link = s[2]
+		if index in indeces
+			@show link
+			push!(links, link)
+		end
+	end
+	close(io)
+	links
+end
+
 # ╔═╡ Cell order:
 # ╠═7c8adb4b-7039-48b7-81a5-21bcd63984fb
 # ╠═78387644-932d-11eb-33e1-47040dd4d2e4
@@ -92,3 +110,4 @@ invidx["gautama"]
 # ╠═53e435dc-94e1-4d44-98e4-f44cedf4ba97
 # ╠═71640944-8081-4fb2-92be-3687238eff06
 # ╠═50dd6751-3d52-4203-936a-fd4410e073d6
+# ╠═b7cb8d94-fd8e-4113-aa8c-942c3e25c925

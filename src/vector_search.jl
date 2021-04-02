@@ -108,9 +108,6 @@ for textid in texts_id
 	rank[textid] = cos_sim 
 end
 
-# ╔═╡ 8495b895-966e-47c3-8636-27d2f76a591d
-
-
 # ╔═╡ 82a96345-a32a-46ba-89be-d77670f0ccb1
 rank
 
@@ -119,6 +116,33 @@ result = sort(collect(rank), by=x->x[2], rev=true)
 
 # ╔═╡ 5a0a0e32-9cd4-45a1-91d3-7e2f50b93c55
 top5 = result[1:5]
+
+# ╔═╡ 10065769-08c2-4840-82f3-8c810fbd3b16
+top5_texts_id = map(x -> x[1], top5) 
+
+# ╔═╡ 98cae835-383c-4fbd-ab7d-ee763e250999
+InverseIndex.loadtexts(top5_texts_id)
+
+# ╔═╡ d300c3cd-9f6f-4e0c-a643-1c4a0f4fdbbe
+function loadlinks(indeces, path="../data/index.txt")
+	links = []
+	io = open(path, "r")
+	lines = readlines(io)
+	for line in lines
+		s = split(line, " ")
+		index = parse(Int32, s[1])
+		link = s[2]
+		if index in indeces
+			@show link
+			push!(links, link)
+		end
+	end
+	close(io)
+	links
+end
+
+# ╔═╡ 94fb185d-b403-412c-9e99-860ed5d2445e
+loadlinks(top5_texts_id)
 
 # ╔═╡ Cell order:
 # ╠═02d140f4-9585-4699-b306-d99c63451afc
@@ -143,7 +167,10 @@ top5 = result[1:5]
 # ╠═b99a8a50-dc53-43cc-8c28-379960a8c773
 # ╠═74ba6add-2f74-429e-8850-201a580044b9
 # ╠═37630ef7-503c-4479-ba8c-2bba1f5ebfb9
-# ╠═8495b895-966e-47c3-8636-27d2f76a591d
 # ╠═82a96345-a32a-46ba-89be-d77670f0ccb1
 # ╠═80b4bd89-92ba-4c41-ad5e-0e32cffca8e7
 # ╠═5a0a0e32-9cd4-45a1-91d3-7e2f50b93c55
+# ╠═10065769-08c2-4840-82f3-8c810fbd3b16
+# ╠═98cae835-383c-4fbd-ab7d-ee763e250999
+# ╠═d300c3cd-9f6f-4e0c-a643-1c4a0f4fdbbe
+# ╠═94fb185d-b403-412c-9e99-860ed5d2445e
