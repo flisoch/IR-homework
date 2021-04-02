@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.21
+# v0.14.0
 
 using Markdown
 using InteractiveUtils
@@ -102,7 +102,30 @@ function corpustfidf(crps, tfs, idf)
 end
 
 # ╔═╡ 6ce3509e-9327-11eb-10fd-ab1a8f23512d
+function corpustfidf(crps)
+	update_lexicon!(crps)
+	update_inverse_index!(crps)
+	tfs = corpustfs(crps) 
+	idf = corpusidf(crps, inverse_index(crps))
+	if !(crps isa Corpus)
+		error("Passed variable  crps(Corpus of documents) is not a Corpus type")
+	end
+	if !(tfs isa Array)
+		error("Passed variable tfs is not an Array type")
+	end
+	if !(idf isa Dict)
+		error("Passed variable idf is not a Dict type")
+	end
+	
+	tfidfs = []
+	for i = 1: length(crps)
+		doc_tf = tfs[i]
+		doc_tfidf = tfidf(doc_tf, idf)
 
+		push!(tfidfs, doc_tfidf)
+	end
+	tfidfs
+end
 
 # ╔═╡ Cell order:
 # ╠═3eadb1e8-9326-11eb-046b-9b64278a7052

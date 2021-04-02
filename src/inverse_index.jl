@@ -16,7 +16,12 @@ function loadtexts(indices, path="../data/texts/")
 			@show filepath
 			io = open(filepath, "r")
 			text = readline(io)
-			push!(texts, StringDocument(text))
+			
+			sd1 = StringDocument(text)
+			prepare!(sd1, strip_punctuation| strip_non_letters| strip_articles| strip_indefinite_articles| strip_prepositions| strip_pronouns| strip_stopwords)
+			remove_case!(sd1)
+			
+			push!(texts, sd1)
 			close(io)
 		end
 	end
