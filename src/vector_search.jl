@@ -43,12 +43,6 @@ InverseIndex = ingredients("inverse_index.jl")
 # ╔═╡ 00cf7f2c-3904-4658-ae4a-5d3bfa8a9cac
 BooleanSearch = ingredients("boolean_search.jl")
 
-# ╔═╡ 2ae193d5-def1-44ab-ba16-4c3418e43e7f
-@bind query TextField()
-
-# ╔═╡ e2e3caf4-fe6b-4d82-a4a4-e2f47e427f44
-query
-
 # ╔═╡ cc606c37-ea00-40ea-affa-b4b3e39c2e6a
 function cossim(doc_tfidf, query_tfidf)
 	sum = 0
@@ -66,62 +60,27 @@ function cossim(doc_tfidf, query_tfidf)
 
 end
 
-# ╔═╡ 7fa4223d-1425-42b6-9870-0b60f090ae78
-querycorpus = Corpus([StringDocument(query)])
-
-# ╔═╡ 532982b1-e61b-4925-bfa6-978a3532976f
-update_lexicon!(querycorpus)
-
-# ╔═╡ dbacad5f-9572-4508-8468-78168b2d596f
-corpus = InverseIndex.loadtexts([x for x=1:98])
-
-# ╔═╡ 572dc393-317a-4e35-96f7-99faf003c7be
-update_lexicon!(corpus)
-
-# ╔═╡ a542e28c-600d-4c57-a766-0721f0f38109
-query_tf = TfIdf.tf(querycorpus.lexicon, corpus.lexicon)
-
-# ╔═╡ e71f2908-fb04-4443-9560-57ac257d45b2
-invidx = InverseIndex.saved_inverseindex()
-
-# ╔═╡ ba4700ca-3963-4b5b-bdb2-d4c1af95d91e
-idf = TfIdf.corpusidf(corpus, invidx)
-
-# ╔═╡ 70b67c84-8851-4a2c-b115-0ab973b2a192
-query_tfidf = TfIdf.tfidf(query_tf, idf)
-
-# ╔═╡ dc387e35-d994-4be3-ac62-10b9b78c1c76
-texts_id = BooleanSearch.booleansearch(invidx, query)
-
-# ╔═╡ 05f6c955-4a1a-4749-8e37-c0a7d7b088d4
-InverseIndex.loadtexts(texts_id)
-
-# ╔═╡ b99a8a50-dc53-43cc-8c28-379960a8c773
-cprs_tfidf = TfIdf.corpustfidf(corpus)
-
-# ╔═╡ 74ba6add-2f74-429e-8850-201a580044b9
-rank = Dict()
-
-# ╔═╡ 37630ef7-503c-4479-ba8c-2bba1f5ebfb9
-for textid in texts_id
-	cos_sim = cossim(cprs_tfidf[textid], query_tfidf)
-	rank[textid] = cos_sim 
+# ╔═╡ 79c98301-c35c-47e2-abb8-ce606b95ed21
+function ranks(texts_id, crps_tfidf, query_tfidf)
+	results = Dict()
+	for textid in texts_id
+		cos_sim = cossim(crps_tfidf[textid], query_tfidf)
+		results[textid] = cos_sim 
+	end
+	rank = sort(collect(results), by=x->x[2], rev=true)
+	rank
 end
 
-# ╔═╡ 82a96345-a32a-46ba-89be-d77670f0ccb1
-rank
-
-# ╔═╡ 80b4bd89-92ba-4c41-ad5e-0e32cffca8e7
-result = sort(collect(rank), by=x->x[2], rev=true)
-
-# ╔═╡ 5a0a0e32-9cd4-45a1-91d3-7e2f50b93c55
-top5 = result[1:5]
-
-# ╔═╡ 10065769-08c2-4840-82f3-8c810fbd3b16
-top5_texts_id = map(x -> x[1], top5) 
-
-# ╔═╡ 98cae835-383c-4fbd-ab7d-ee763e250999
-InverseIndex.loadtexts(top5_texts_id)
+# ╔═╡ 92bbfbab-4915-40cc-8fd4-9e9c91a51119
+function query_tfidf(query, corpus, invidx)
+	querycorpus = Corpus([StringDocument(query)])
+	update_lexicon!(querycorpus)
+	update_lexicon!(corpus)
+	query_tf = TfIdf.tf(querycorpus.lexicon, corpus.lexicon)
+	idf = TfIdf.corpusidf(corpus, invidx)
+	query_tfidf = TfIdf.tfidf(query_tf, idf)
+	query_tfidf
+end
 
 # ╔═╡ d300c3cd-9f6f-4e0c-a643-1c4a0f4fdbbe
 function loadlinks(indeces, path="../data/index.txt")
@@ -134,6 +93,7 @@ function loadlinks(indeces, path="../data/index.txt")
 		link = s[2]
 		if index in indeces
 			@show link
+			@show index
 			push!(links, link)
 		end
 	end
@@ -141,8 +101,61 @@ function loadlinks(indeces, path="../data/index.txt")
 	links
 end
 
-# ╔═╡ 94fb185d-b403-412c-9e99-860ed5d2445e
-loadlinks(top5_texts_id)
+# ╔═╡ d373cb44-e598-40ce-b50c-7d0496c712db
+struct Searcher
+	corpus
+	invidx
+	crps_tfidf
+	
+	Searcher(corpus, invidx, crps_tfidf) = new(corpus, invidx, crps_tfidf)
+	
+	function search(query)
+		texts_id = BooleanSearch.booleansearch(invidx, query)
+		querytfidf = query_tfidf(query, corpus, invidx)
+		rank = ranks(texts_id, crps_tfidf, querytfidf)
+
+		top3 = rank[1:3]
+		top3_texts_id = map(x -> x[1], top3)
+		loadlinks(top3_texts_id)
+	end
+end
+
+# ╔═╡ 8e8e4e77-ae7f-4ed3-8c7d-3c043f7fc5f2
+begin 
+	corpus = InverseIndex.loadtexts([x for x=1:98])
+	invidx = InverseIndex.saved_inverseindex()
+	crps_tfidf = TfIdf.corpustfidf(corpus)
+end
+
+# ╔═╡ b157816f-e27c-4ef8-8ee0-0a1fe79c5a23
+searcher = Searcher(corpus, invidx, crps_tfidf)
+
+# ╔═╡ 42940544-4007-4241-bac1-8080e198e264
+function search(query, searcher)
+	corpus = searcher.corpus
+	invidx = searcher.invidx
+	crps_tfidf = searcher.crps_tfidf
+	
+	texts_id = BooleanSearch.booleansearch(invidx, query)
+	querytfidf = query_tfidf(query, corpus, invidx)
+	rank = ranks(texts_id, crps_tfidf, querytfidf)
+	
+	top3 = rank[1:3]
+	top3_texts_id = map(x -> x[1], top3)
+	loadlinks(top3_texts_id)
+end
+
+# ╔═╡ 6310aab3-5610-4182-a5fa-b5fb61896c80
+
+
+# ╔═╡ b12fbb52-58a7-45f0-90d7-63f319291a8b
+# @bind query TextField()
+
+# ╔═╡ 36ad431a-b1df-46b6-8c82-6aaa29b9ec86
+query = "history religion"
+
+# ╔═╡ 15fe5d49-cedb-49b9-bb90-b630096b6019
+search(query, searcher)
 
 # ╔═╡ Cell order:
 # ╠═02d140f4-9585-4699-b306-d99c63451afc
@@ -151,26 +164,15 @@ loadlinks(top5_texts_id)
 # ╠═08f4187c-55b1-44c2-b467-b7f08b2506fa
 # ╠═e2d0a89d-e7a7-4202-951c-a3dceab940ad
 # ╠═00cf7f2c-3904-4658-ae4a-5d3bfa8a9cac
-# ╠═2ae193d5-def1-44ab-ba16-4c3418e43e7f
-# ╠═e2e3caf4-fe6b-4d82-a4a4-e2f47e427f44
 # ╠═cc606c37-ea00-40ea-affa-b4b3e39c2e6a
-# ╠═7fa4223d-1425-42b6-9870-0b60f090ae78
-# ╠═532982b1-e61b-4925-bfa6-978a3532976f
-# ╠═dbacad5f-9572-4508-8468-78168b2d596f
-# ╠═572dc393-317a-4e35-96f7-99faf003c7be
-# ╠═a542e28c-600d-4c57-a766-0721f0f38109
-# ╠═e71f2908-fb04-4443-9560-57ac257d45b2
-# ╠═ba4700ca-3963-4b5b-bdb2-d4c1af95d91e
-# ╠═70b67c84-8851-4a2c-b115-0ab973b2a192
-# ╠═dc387e35-d994-4be3-ac62-10b9b78c1c76
-# ╠═05f6c955-4a1a-4749-8e37-c0a7d7b088d4
-# ╠═b99a8a50-dc53-43cc-8c28-379960a8c773
-# ╠═74ba6add-2f74-429e-8850-201a580044b9
-# ╠═37630ef7-503c-4479-ba8c-2bba1f5ebfb9
-# ╠═82a96345-a32a-46ba-89be-d77670f0ccb1
-# ╠═80b4bd89-92ba-4c41-ad5e-0e32cffca8e7
-# ╠═5a0a0e32-9cd4-45a1-91d3-7e2f50b93c55
-# ╠═10065769-08c2-4840-82f3-8c810fbd3b16
-# ╠═98cae835-383c-4fbd-ab7d-ee763e250999
+# ╠═79c98301-c35c-47e2-abb8-ce606b95ed21
+# ╠═92bbfbab-4915-40cc-8fd4-9e9c91a51119
 # ╠═d300c3cd-9f6f-4e0c-a643-1c4a0f4fdbbe
-# ╠═94fb185d-b403-412c-9e99-860ed5d2445e
+# ╠═d373cb44-e598-40ce-b50c-7d0496c712db
+# ╠═8e8e4e77-ae7f-4ed3-8c7d-3c043f7fc5f2
+# ╠═b157816f-e27c-4ef8-8ee0-0a1fe79c5a23
+# ╠═42940544-4007-4241-bac1-8080e198e264
+# ╠═6310aab3-5610-4182-a5fa-b5fb61896c80
+# ╠═b12fbb52-58a7-45f0-90d7-63f319291a8b
+# ╠═36ad431a-b1df-46b6-8c82-6aaa29b9ec86
+# ╠═15fe5d49-cedb-49b9-bb90-b630096b6019
