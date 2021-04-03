@@ -106,7 +106,7 @@ struct Searcher
 	corpus
 	invidx
 	crps_tfidf
-	
+
 	Searcher(corpus, invidx, crps_tfidf) = new(corpus, invidx, crps_tfidf)
 	
 	function search(query)
@@ -122,8 +122,8 @@ end
 
 # ╔═╡ 8e8e4e77-ae7f-4ed3-8c7d-3c043f7fc5f2
 begin 
-	corpus = InverseIndex.loadtexts([x for x=1:98])
-	invidx = InverseIndex.saved_inverseindex()
+	corpus = InverseIndex.loadtexts([x for x=1:99])
+	invidx = InverseIndex.inverseindex(corpus)
 	crps_tfidf = TfIdf.corpustfidf(corpus)
 end
 
@@ -135,14 +135,19 @@ function search(query, searcher)
 	corpus = searcher.corpus
 	invidx = searcher.invidx
 	crps_tfidf = searcher.crps_tfidf
+	querytfidf = query_tfidf(query, corpus, invidx)
 	
 	texts_id = BooleanSearch.booleansearch(invidx, query)
-	querytfidf = query_tfidf(query, corpus, invidx)
 	rank = ranks(texts_id, crps_tfidf, querytfidf)
 	
-	top3 = rank[1:3]
-	top3_texts_id = map(x -> x[1], top3)
-	loadlinks(top3_texts_id)
+	maxresults = length(rank)
+	if maxresults < 5
+		top = rank[1:maxresults]
+	else
+		top = rank[1:5]
+	end
+	top_texts_id = map(x -> x[1], top)
+	loadlinks(top_texts_id)
 end
 
 # ╔═╡ 6310aab3-5610-4182-a5fa-b5fb61896c80
@@ -152,7 +157,7 @@ end
 # @bind query TextField()
 
 # ╔═╡ 36ad431a-b1df-46b6-8c82-6aaa29b9ec86
-query = "history religion"
+query = "president of us"
 
 # ╔═╡ 15fe5d49-cedb-49b9-bb90-b630096b6019
 search(query, searcher)

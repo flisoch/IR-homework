@@ -41,7 +41,7 @@ function withoutsecond(list1, list2)
 end
 
 # ╔═╡ c28d26c9-c18f-41cd-9286-035ab0f7f56b
-query = "buddha AND gautama"
+query = "buddha god"
 
 # ╔═╡ 8702638f-ab5c-4e45-87f0-7795dfb45476
 s = split(query)
@@ -49,17 +49,29 @@ s = split(query)
 # ╔═╡ 334ffc1c-4992-4306-9c78-ddde65ae542b
 function booleansearch(invidx, query)
 	s = split(query)
+	s = map(x -> String(x) , s)
+	hasbool = true
+	if !("AND" in s) && !("OR" in s) && !("NOT" in s)
+		hasbool = false
+	end
+	@show hasbool
 	result = invidx[s[1]]
 		
 	for i = 2:length(s)
-		if (i != length(s))
-			nextword = s[i+1]
-			if s[i] == "AND"
-				result = intersect(result, invidx[nextword])
-			elseif s[i] == "OR"
-				result = unique([result; invidx[nextword]])
-			elseif s[i] == "NOT"
-				result = withoutsecond(result, invidx[nextword])
+		if !hasbool
+			result = unique([result; invidx[s[i]]])
+		else
+			if (i != length(s))
+				nextword = s[i+1]
+				if s[i] == "AND"
+					result = intersect(result, invidx[nextword])
+				elseif s[i] == "OR"
+					result = unique([result; invidx[nextword]])
+				elseif s[i] == "NOT"
+					result = withoutsecond(result, invidx[nextword])
+				else
+					result = unique([result; invidx[s[i]]])
+				end
 			end
 		end
 	end
