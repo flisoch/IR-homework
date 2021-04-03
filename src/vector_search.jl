@@ -13,10 +13,7 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 02d140f4-9585-4699-b306-d99c63451afc
-using PlutoUI
-
-# ╔═╡ 43cb151c-b7c5-464c-9a70-7af62c9c9f02
+# ╔═╡ c5183202-7fe2-40a4-adf6-d1972a4714de
 using TextAnalysis
 
 # ╔═╡ b6ab3fe0-688d-4c26-800d-a0beaea7ad58
@@ -120,15 +117,14 @@ struct Searcher
 	end
 end
 
-# ╔═╡ 8e8e4e77-ae7f-4ed3-8c7d-3c043f7fc5f2
-begin 
+# ╔═╡ ec19ea2a-6d08-421a-96f1-38f2e92d44aa
+function searcher()
 	corpus = InverseIndex.loadtexts([x for x=1:99])
 	invidx = InverseIndex.inverseindex(corpus)
 	crps_tfidf = TfIdf.corpustfidf(corpus)
+	searcher1 = Searcher(corpus, invidx, crps_tfidf)
+	searcher1
 end
-
-# ╔═╡ b157816f-e27c-4ef8-8ee0-0a1fe79c5a23
-searcher = Searcher(corpus, invidx, crps_tfidf)
 
 # ╔═╡ 42940544-4007-4241-bac1-8080e198e264
 function search(query, searcher)
@@ -150,22 +146,15 @@ function search(query, searcher)
 	loadlinks(top_texts_id)
 end
 
-# ╔═╡ 6310aab3-5610-4182-a5fa-b5fb61896c80
-
-
 # ╔═╡ b12fbb52-58a7-45f0-90d7-63f319291a8b
 # @bind query TextField()
 
-# ╔═╡ 36ad431a-b1df-46b6-8c82-6aaa29b9ec86
-query = "president of us"
+# ╔═╡ e8114b70-c6d2-483f-8a4f-210fc3066158
 
-# ╔═╡ 15fe5d49-cedb-49b9-bb90-b630096b6019
-search(query, searcher)
 
 # ╔═╡ Cell order:
-# ╠═02d140f4-9585-4699-b306-d99c63451afc
-# ╠═43cb151c-b7c5-464c-9a70-7af62c9c9f02
-# ╠═b6ab3fe0-688d-4c26-800d-a0beaea7ad58
+# ╠═c5183202-7fe2-40a4-adf6-d1972a4714de
+# ╟─b6ab3fe0-688d-4c26-800d-a0beaea7ad58
 # ╠═08f4187c-55b1-44c2-b467-b7f08b2506fa
 # ╠═e2d0a89d-e7a7-4202-951c-a3dceab940ad
 # ╠═00cf7f2c-3904-4658-ae4a-5d3bfa8a9cac
@@ -174,10 +163,7 @@ search(query, searcher)
 # ╠═92bbfbab-4915-40cc-8fd4-9e9c91a51119
 # ╠═d300c3cd-9f6f-4e0c-a643-1c4a0f4fdbbe
 # ╠═d373cb44-e598-40ce-b50c-7d0496c712db
-# ╠═8e8e4e77-ae7f-4ed3-8c7d-3c043f7fc5f2
-# ╠═b157816f-e27c-4ef8-8ee0-0a1fe79c5a23
+# ╠═ec19ea2a-6d08-421a-96f1-38f2e92d44aa
 # ╠═42940544-4007-4241-bac1-8080e198e264
-# ╠═6310aab3-5610-4182-a5fa-b5fb61896c80
-# ╠═b12fbb52-58a7-45f0-90d7-63f319291a8b
-# ╠═36ad431a-b1df-46b6-8c82-6aaa29b9ec86
-# ╠═15fe5d49-cedb-49b9-bb90-b630096b6019
+# ╟─b12fbb52-58a7-45f0-90d7-63f319291a8b
+# ╠═e8114b70-c6d2-483f-8a4f-210fc3066158
