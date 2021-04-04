@@ -9,11 +9,13 @@ Julia. Репозиторий языка [на гитхабе](https://github.co
 # Запуск
 В терминале
 
+0. ```$git clone https://github.com/flisoch/IR-homework```
+
 1. ```$julia```
 
 2. ```julia> ]```
 
-3. ```(v1.0) pkg> add https://github.com/flisoch/IR-homework```
+3. ```(v1.0) pkg> add https://github.com/flisoch/IR-homework``` - добавит зависимости
 
 4. Обратно в Julia REPL, нажав backspace
 
