@@ -91,11 +91,22 @@ function loadlinks(indeces, path="../data/index.txt")
 		if index in indeces
 			@show link
 			@show index
-			push!(links, link)
+			push!(links, link * " " * string(index))
 		end
 	end
 	close(io)
 	links
+end
+
+# ╔═╡ ff401a32-b9d6-4da1-89ff-db8312601ae4
+function remove_bool(query)
+	cleanquery = ""
+	for word in query
+		if word != "AND" && word != "OR" && word != "NOT"
+			cleanquery = cleanquery * word * " "
+		end
+	end
+	chop(cleanquery)
 end
 
 # ╔═╡ d373cb44-e598-40ce-b50c-7d0496c712db
@@ -108,7 +119,7 @@ struct Searcher
 	
 	function search(query)
 		texts_id = BooleanSearch.booleansearch(invidx, query)
-		querytfidf = query_tfidf(query, corpus, invidx)
+		querytfidf = query_tfidf(remove_bool(query), corpus, invidx)
 		rank = ranks(texts_id, crps_tfidf, querytfidf)
 
 		top3 = rank[1:3]
@@ -131,7 +142,7 @@ function search(query, searcher)
 	corpus = searcher.corpus
 	invidx = searcher.invidx
 	crps_tfidf = searcher.crps_tfidf
-	querytfidf = query_tfidf(query, corpus, invidx)
+	querytfidf = query_tfidf(remove_bool(query), corpus, invidx)
 	
 	texts_id = BooleanSearch.booleansearch(invidx, query)
 	rank = ranks(texts_id, crps_tfidf, querytfidf)
@@ -149,9 +160,6 @@ end
 # ╔═╡ b12fbb52-58a7-45f0-90d7-63f319291a8b
 # @bind query TextField()
 
-# ╔═╡ e8114b70-c6d2-483f-8a4f-210fc3066158
-
-
 # ╔═╡ Cell order:
 # ╠═c5183202-7fe2-40a4-adf6-d1972a4714de
 # ╟─b6ab3fe0-688d-4c26-800d-a0beaea7ad58
@@ -162,8 +170,8 @@ end
 # ╠═79c98301-c35c-47e2-abb8-ce606b95ed21
 # ╠═92bbfbab-4915-40cc-8fd4-9e9c91a51119
 # ╠═d300c3cd-9f6f-4e0c-a643-1c4a0f4fdbbe
+# ╠═ff401a32-b9d6-4da1-89ff-db8312601ae4
 # ╠═d373cb44-e598-40ce-b50c-7d0496c712db
 # ╠═ec19ea2a-6d08-421a-96f1-38f2e92d44aa
 # ╠═42940544-4007-4241-bac1-8080e198e264
 # ╟─b12fbb52-58a7-45f0-90d7-63f319291a8b
-# ╠═e8114b70-c6d2-483f-8a4f-210fc3066158

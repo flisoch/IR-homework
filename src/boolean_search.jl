@@ -25,7 +25,8 @@ InverseIndex = ingredients("inverse_index.jl")
 # ╔═╡ 7f3a0391-2010-421f-a20c-76e3ecacf92a
 function withoutsecond(list1, list2)
 	both = unique([list1; list2])
-	findall(x -> (x in list1) && !(x in list2), both)
+	indeces = findall(x -> (x in list1) && !(x in list2), both)
+	list1[indeces]
 end
 
 # ╔═╡ 334ffc1c-4992-4306-9c78-ddde65ae542b
