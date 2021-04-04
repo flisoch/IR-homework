@@ -1,7 +1,7 @@
 authors = ["flisoch <flisochcs@gmail.com>",
 "emiliyagaripova <aivvent@yandex.ru>"]
 
-name = "Search.jl"
+name = "Search"
 uuid = "536b173e-84cd-4119-93da-466d32794ab8"
 version = "1.0.1"
 

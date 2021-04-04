@@ -153,6 +153,7 @@ function search(query, searcher)
 	else
 		top = rank[1:5]
 	end
+	@show top
 	top_texts_id = map(x -> x[1], top)
 	loadlinks(top_texts_id)
 end
