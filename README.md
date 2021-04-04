@@ -1,5 +1,6 @@
 # IR-homework
 Домашние задания курса Информационный Поиск
+Выполнили Юлдашев Ниёз и Гарипова Эмилия
 
 # Язык Программирования
 Julia. Репозиторий языка [на гитхабе](https://github.com/JuliaLang/julia)
@@ -7,17 +8,19 @@ Julia. Репозиторий языка [на гитхабе](https://github.co
 # Среда разработки и выполнения (?)
 Pluto. Репозиторий [на гитхабе](https://github.com/fonsp/Pluto.jl)
 
-Но можно выполнять код и из терминала
+# Запуск
+В терминале
 
-# Библиотеки/зависимости
-[TextAnalysis](https://github.com/JuliaText/TextAnalysis.jl) - работа с текстом
+1. ```$julia```
 
-[HTTP](https://github.com/JuliaWeb/HTTP.jl) - HTTP клиент и сервер 
+2. ```julia> ]```
 
-[Gumbo](https://github.com/JuliaWeb/Gumbo.jl) - html парсинг
+3. ```(v1.0) pkg> add https://github.com/flisoch/IR-homework```
 
-[Cascadia](https://github.com/Algocircle/Cascadia.jl) - CSS селектор
+4. Обратно в Julia REPL, нажав backspace
 
-[PyCall](https://github.com/JuliaPy/PyCall.jl) - Вызов функций Python
+5. ```using Pluto```
 
-[nltk](https://github.com/nltk/nltk) - NLP на Python
+6. ```Pluto.run()```
+
+7. В плуто открыть файл ```/<path-to-project>/src/demo.jl```
