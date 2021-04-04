@@ -19,8 +19,8 @@ Julia. Репозиторий языка [на гитхабе](https://github.co
 
 4. Обратно в Julia REPL, нажав backspace
 
-5. ```using Pluto```
+5. ```julia> using Pluto```
 
-6. ```Pluto.run()```
+6. ```julia> Pluto.run()```
 
 7. В плуто открыть файл ```/<path-to-project>/src/demo.jl```
