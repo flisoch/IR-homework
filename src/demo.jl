@@ -26,7 +26,7 @@ VectorSearch = ingredients("vector_search.jl")
 searcher = VectorSearch.searcher()
 
 # ╔═╡ e2328b1e-deec-4a05-8b50-bb0dcaf4bf20
-query = "president"
+query = "mark"
 
 # ╔═╡ 7fba7bbc-40f8-4425-8414-36b8b122d4fc
 VectorSearch.search(query, searcher)

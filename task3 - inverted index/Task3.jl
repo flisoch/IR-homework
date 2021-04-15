@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.21
+# v0.14.0
 
 using Markdown
 using InteractiveUtils
@@ -41,7 +41,7 @@ task2 = ingredients("../task2 - tokens/Task2.jl")
 sds = []
 
 # ╔═╡ c5624a56-9140-11eb-38dd-033c51745656
-filescount = 10
+filescount = 98
 
 # ╔═╡ 9f047860-913f-11eb-12eb-e9134d976b91
 for i = 0:filescount
@@ -74,7 +74,7 @@ function saveindex(invidx)
 	for (key, value) in invidx
 		countstring = " "
 		for num in value
-			countstring = countstring * string(num) * " "
+			countstring = countstring * string(num - 1) * " "
 		end
 		write(io, key * countstring * "\n")
 	end
@@ -241,6 +241,7 @@ end
 save_idf_tfidf(idf, tfidf)
 
 # ╔═╡ 1daecb18-9181-11eb-0226-6f4a3a1a936f
+
 
 
 # ╔═╡ Cell order:

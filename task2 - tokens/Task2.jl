@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.4
+# v0.12.21
 
 using Markdown
 using InteractiveUtils
@@ -100,9 +100,6 @@ for i = 0:filescount
 	savelemmas(words, lemmas)
 end
 
-# ╔═╡ 79949dbc-90f1-11eb-1bcc-df4ba3ee7542
-
-
 # ╔═╡ Cell order:
 # ╠═7f2dc1b0-90ce-11eb-376e-23dc70b084d7
 # ╠═ed998a78-90e3-11eb-146e-e306f16e9324
@@ -118,4 +115,3 @@ end
 # ╠═840a26d8-90ef-11eb-3373-918c3654e4f1
 # ╠═316940f4-90ee-11eb-33d9-d52dae65f2bc
 # ╠═8a5ac0a8-90d2-11eb-2bb0-75be8cce5a3b
-# ╠═79949dbc-90f1-11eb-1bcc-df4ba3ee7542
